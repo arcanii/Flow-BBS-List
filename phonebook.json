@@ -14,6 +14,8 @@
       "sysop": "arcanii",
       "banner": "banners/anie-solutions.png",
       "uses": [
+        "pictures",
+        "models",
         "effects",
         "sounds"
       ],
