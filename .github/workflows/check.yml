@@ -1,0 +1,44 @@
+# Every pull request and every push to main: the checks' own tests, then the
+# phonebook against its format. A pull request's new or changed boards are
+# called, to see each answers with a key it lists. On main, the phonebook's
+# signature too: it fails from a merge until the owner signs (scripts/sign.sh),
+# a reminder, while dial keeps the copy it last found signed.
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: The checks' own tests
+        run: python3 -m unittest discover -s tests -v
+      - name: The phonebook
+        run: python3 scripts/check.py phonebook.json
+      - name: Each new or changed board answers with a key it lists
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.base_ref }}
+        run: python3 scripts/check.py --online --changed-from "origin/$BASE" phonebook.json
+
+  signed:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Signed with the phonebook's key
+        run: |
+          if [ -f keys/phonebook.pub ]; then
+            python3 scripts/check.py --signed phonebook.json
+          else
+            echo "No key yet: keys/phonebook.pub comes with the first signature."
+          fi

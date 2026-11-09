@@ -1,0 +1,47 @@
+# Each hour, every board is called, and when each last answered with a key it
+# lists goes in seen.json on the branch `seen`, which dial reads for the
+# directory. It's a branch of its own, one commit replaced each time, so main's
+# history and its pull requests never meet it. A board that doesn't answer
+# keeps the time it last did. GitHub stops a schedule after 60 days without a
+# push; run it by hand (Actions, Seen) to start it again.
+name: Seen
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: seen
+
+jobs:
+  seen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: What was seen before
+        run: |
+          if git fetch -q --depth 1 origin seen; then
+            git show FETCH_HEAD:seen.json > "$RUNNER_TEMP/before.json"
+          else
+            printf '{\n  "format": 1,\n  "seen": {}\n}\n' > "$RUNNER_TEMP/before.json"
+          fi
+          cp "$RUNNER_TEMP/before.json" "$RUNNER_TEMP/seen.json"
+      - name: Call each board
+        run: python3 scripts/check.py --seen "$RUNNER_TEMP/seen.json" phonebook.json
+      - name: Put it on the branch seen
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if cmp -s "$RUNNER_TEMP/before.json" "$RUNNER_TEMP/seen.json"; then
+            echo "Nothing new."
+            exit 0
+          fi
+          cd "$(mktemp -d)"
+          git init -q -b seen
+          cp "$RUNNER_TEMP/seen.json" .
+          git add seen.json
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -qm 'Note which boards answered'
+          git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" seen
