@@ -1,0 +1,5 @@
+# The phonebook is signed as its bytes, line ends and all, and they're LF
+# (scripts/sign.sh, on the Mac). Git for Windows checks text out with CRLF,
+# which no signature holds for, so check.py --signed failed there.
+phonebook.json text eol=lf
+phonebook.json.sig text eol=lf

@@ -313,7 +313,8 @@ def main():
             print(f"{path}: {p}")
         return 1
     if args.tidy:
-        with open(path, "w", encoding="utf-8") as f:
+        # LF on every system, Windows too: the signature is of the bytes.
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
             f.write(tidy(book))
     with open(path, encoding="utf-8") as f:
         if f.read() != tidy(book):
