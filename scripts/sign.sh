@@ -10,7 +10,7 @@
 #   scripts/sign.sh --ed-key-file <file>  the private key from a file instead
 #
 # sign_update is taken from SIGN_UPDATE, else from Flow's checkout beside this
-# one (../Flow_Terminal/target/sparkle-*), which Flow's release script fetches.
+# one (../Flow-Terminal/target/sparkle-*), which Flow's release script fetches.
 set -euo pipefail
 
 die() { echo "sign.sh: $*" >&2; exit 1; }
@@ -25,7 +25,7 @@ esac
 
 tool="${SIGN_UPDATE:-}"
 if [[ -z "$tool" ]]; then
-  for c in ../Flow_Terminal/target/sparkle-*/bin/sign_update; do [[ -x "$c" ]] && { tool="$c"; break; }; done
+  for c in ../Flow-Terminal/target/sparkle-*/bin/sign_update; do [[ -x "$c" ]] && { tool="$c"; break; }; done
 fi
 [[ -n "$tool" ]] || die "sign_update not found: run Flow's macos/scripts/release.sh once (it fetches Sparkle), or set SIGN_UPDATE"
 [[ -f keys/phonebook.pub ]] || die "keys/phonebook.pub isn't there: make the key first (README, \"The key\")"

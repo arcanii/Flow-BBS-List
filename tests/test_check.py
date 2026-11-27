@@ -257,7 +257,7 @@ class Signing(unittest.TestCase):
         self.assertFalse(check.verify(data, base64.b64encode(b"short").decode(), self.public))
 
     def test_sparkles_sign_update_makes_a_signature_that_holds(self):
-        found = [os.environ["SIGN_UPDATE"]] if os.environ.get("SIGN_UPDATE") else glob.glob(os.path.join(HERE, "..", "..", "Flow_Terminal", "target", "sparkle-*", "bin", "sign_update"))
+        found = [os.environ["SIGN_UPDATE"]] if os.environ.get("SIGN_UPDATE") else glob.glob(os.path.join(HERE, "..", "..", "Flow-Terminal", "target", "sparkle-*", "bin", "sign_update"))
         if not found:
             self.skipTest("no Sparkle sign_update here (it's on the Mac beside Flow's checkout)")
         der = subprocess.run([self.openssl, "pkey", "-in", self.private, "-outform", "DER"], capture_output=True, check=True).stdout

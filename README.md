@@ -125,8 +125,8 @@ Until it's signed, main's check fails, as a reminder.
 Made once, on the Mac, with Sparkle's tools from Flow's checkout:
 
 ```
-../Flow_Terminal/target/sparkle-*/bin/generate_keys --account Flow-Phonebook
-../Flow_Terminal/target/sparkle-*/bin/generate_keys --account Flow-Phonebook -p > keys/phonebook.pub
+../Flow-Terminal/target/sparkle-*/bin/generate_keys --account Flow-Phonebook
+../Flow-Terminal/target/sparkle-*/bin/generate_keys --account Flow-Phonebook -p > keys/phonebook.pub
 ```
 
 Keep a copy of the private key somewhere safe
